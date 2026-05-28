@@ -80,7 +80,7 @@ Auth config is centralized in:
 
 Important defaults:
 - `issuer`: `http://localhost:8888`
-- `clientId`: `react-client`
+- `clientId`: `admin-client`
 - `scope`: `openid profile read`
 - `redirectUri`: `VITE_AUTH_REDIRECT_URI` or `<window.origin>/callback`
 - `silentRedirectUri`: `VITE_AUTH_SILENT_REDIRECT_URI` or `<window.origin>/silent-callback`

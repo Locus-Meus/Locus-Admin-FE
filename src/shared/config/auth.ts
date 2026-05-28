@@ -8,10 +8,10 @@ function getDefaultRedirectUri(path: string): string {
 }
 
 export const AUTH_CONFIG = {
-  issuer: import.meta.env.VITE_AUTH_ISSUER || 'http://localhost:5175',
-  clientId: 'react-client',
+  issuer: import.meta.env.VITE_AUTH_ISSUER || 'http://localhost:8888',
+  clientId: 'admin-client',
   clientSecret: import.meta.env.VITE_AUTH_CLIENT_SECRET || 'secret',
-  scope: import.meta.env.VITE_AUTH_SCOPE || 'openid profile read',
+  scope: import.meta.env.VITE_AUTH_SCOPE || 'openid profile read write',
   role: import.meta.env.VITE_AUTH_ROLE || 'admin',
   redirectUri:
     import.meta.env.VITE_AUTH_REDIRECT_URI ||
@@ -30,8 +30,8 @@ export const AUTH_CONFIG = {
 
     // OAuth2 / PKCE Flow
     authorize:
-      import.meta.env.VITE_AUTH_AUTHORIZE_ENDPOINT || 'api/oauth2/authorize',
-    token: import.meta.env.VITE_AUTH_TOKEN_ENDPOINT || 'api/oauth2/token',
+      import.meta.env.VITE_AUTH_AUTHORIZE_ENDPOINT || 'oauth2/authorize',
+    token: import.meta.env.VITE_AUTH_TOKEN_ENDPOINT || 'oauth2/token',
 
     // Management
     logout: 'api/logout',
