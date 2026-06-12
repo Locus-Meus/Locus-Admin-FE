@@ -13,6 +13,7 @@ import {
   TabsTrigger,
   LanguageSwitcher,
 } from '@/shared/ui';
+import { ImageUpload } from './image-upload';
 
 /**
  * Utility to shorten long JWT tokens for display
@@ -81,7 +82,9 @@ export function GalleryPage() {
           </TabsList>
 
           <TabsContent value='gallery'>
-            <div className='grid gap-4 mt-4 sm:grid-cols-1'>
+            <div className='mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]'>
+              <ImageUpload />
+
               <div className='rounded-xl border border-border bg-background p-4'>
                 <p className='text-xs uppercase tracking-[0.08em] text-muted-foreground'>
                   {t('gallery.accessToken')}
