@@ -51,6 +51,16 @@ export function GalleryPage() {
     }
   };
 
+  const copyToken = async () => {
+    navigator.clipboard.writeText(token)
+    .then(() => {
+      console.log('Text successfully copied to clipboard');
+    })
+    .catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
+  };
+
   return (
     <main className='mx-auto min-h-screen w-full max-w-6xl px-4 py-8'>
       <LanguageSwitcher className='mb-4 justify-end' />
@@ -89,6 +99,13 @@ export function GalleryPage() {
                 <p className='mt-2 break-all font-mono text-sm text-foreground bg-muted/30 p-2 rounded'>
                   {shorten(token, t('gallery.tokenNotAvailable'))}
                 </p>
+                <Button
+                    variant='outline'
+                    onClick={copyToken}
+                    disabled={isPending}
+                >
+                  {isPending ? 'Wait...' : 'Copy Token'}
+                </Button>
               </div>
             </div>
           </TabsContent>
