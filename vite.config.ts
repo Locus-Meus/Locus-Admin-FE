@@ -35,7 +35,7 @@ export default defineConfig({
   },
   server: {
     // Port for your React app
-    port: 5175,
+    port: 5176,
     proxy: {
       '/api': {
         target: 'http://localhost:8888',
