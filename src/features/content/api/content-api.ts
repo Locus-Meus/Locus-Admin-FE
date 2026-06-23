@@ -2,10 +2,20 @@ import { BaseApiClient } from '@/shared/api/base-api-client';
 import { AUTH_CONFIG } from '@/shared/config/auth';
 
 export type FileProcessingStatus = 'TEMP' | 'DRAFT' | 'INVALID' | (string & {});
+export type ImageProcessingStatus =
+  | 'PROCESSING'
+  | 'READY'
+  | 'INVALID'
+  | (string & {});
 
 export interface FileProcessingResponse {
   id: string;
   status: FileProcessingStatus;
+}
+
+export interface ImageProcessingResponse {
+  id: number;
+  status: ImageProcessingStatus;
 }
 
 export interface ImageCreationRequest {
@@ -32,10 +42,16 @@ class ContentApi extends BaseApiClient {
     return this.get<FileProcessingResponse>(`/v1/api/admin/file/${id}/status`);
   }
 
-  public async createImage(fileId: string): Promise<void> {
+  public async createImage(fileId: string): Promise<ImageProcessingResponse> {
     const payload: ImageCreationRequest = { fileId };
 
-    return this.post<void>('/v1/api/admin/images', payload);
+    return this.post<ImageProcessingResponse>('/v1/api/admin/images', payload);
+  }
+
+  public async getImageStatus(id: number): Promise<ImageProcessingResponse> {
+    return this.get<ImageProcessingResponse>(
+      `/v1/api/admin/images/${id}/status`,
+    );
   }
 }
 

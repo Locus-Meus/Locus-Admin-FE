@@ -7,16 +7,27 @@ import {
   contentApi,
   type FileProcessingResponse,
   type FileProcessingStatus,
+  type ImageProcessingResponse,
+  type ImageProcessingStatus,
 } from '@/features/content';
 import { Button } from '@/shared/ui';
 
 const STATUS_POLL_INTERVAL_MS = 1_000;
 const MAX_STATUS_CHECKS = 60;
 
-type UploadPhase = 'idle' | 'uploading' | 'processing' | 'creating';
+type UploadPhase =
+  | 'idle'
+  | 'uploading'
+  | 'processingFile'
+  | 'creatingImage'
+  | 'processingImage';
 
-function isTerminalStatus(status: FileProcessingStatus): boolean {
+function isTerminalFileStatus(status: FileProcessingStatus): boolean {
   return status === 'DRAFT' || status === 'INVALID';
+}
+
+function isTerminalImageStatus(status: ImageProcessingStatus): boolean {
+  return status === 'READY' || status === 'INVALID';
 }
 
 function wait(ms: number): Promise<void> {
@@ -40,7 +51,7 @@ export function ImageUpload() {
     for (let attempt = 0; attempt < MAX_STATUS_CHECKS; attempt += 1) {
       const statusResponse = await contentApi.getFileStatus(id);
 
-      if (isTerminalStatus(statusResponse.status)) {
+      if (isTerminalFileStatus(statusResponse.status)) {
         return statusResponse;
       }
 
@@ -50,14 +61,30 @@ export function ImageUpload() {
     throw new Error(t('gallery.imageUpload.timeout'));
   };
 
+  const waitForReadyImage = async (
+    id: number,
+  ): Promise<ImageProcessingResponse> => {
+    for (let attempt = 0; attempt < MAX_STATUS_CHECKS; attempt += 1) {
+      const statusResponse = await contentApi.getImageStatus(id);
+
+      if (isTerminalImageStatus(statusResponse.status)) {
+        return statusResponse;
+      }
+
+      await wait(STATUS_POLL_INTERVAL_MS);
+    }
+
+    throw new Error(t('gallery.imageUpload.imageTimeout'));
+  };
+
   const uploadImageMutation = useMutation({
     mutationFn: async (selectedFile: File) => {
       setPhase('uploading');
       const uploadResponse = await contentApi.uploadFile(selectedFile);
       let processedFile = uploadResponse;
 
-      if (!isTerminalStatus(processedFile.status)) {
-        setPhase('processing');
+      if (!isTerminalFileStatus(processedFile.status)) {
+        setPhase('processingFile');
         processedFile = await waitForProcessedFile(processedFile.id);
       }
 
@@ -69,8 +96,22 @@ export function ImageUpload() {
         throw new Error(t('gallery.imageUpload.unexpectedStatus'));
       }
 
-      setPhase('creating');
-      await contentApi.createImage(processedFile.id);
+      setPhase('creatingImage');
+      const imageResponse = await contentApi.createImage(processedFile.id);
+      let processedImage = imageResponse;
+
+      if (!isTerminalImageStatus(processedImage.status)) {
+        setPhase('processingImage');
+        processedImage = await waitForReadyImage(processedImage.id);
+      }
+
+      if (processedImage.status === 'INVALID') {
+        throw new Error(t('gallery.imageUpload.imageInvalid'));
+      }
+
+      if (processedImage.status !== 'READY') {
+        throw new Error(t('gallery.imageUpload.unexpectedImageStatus'));
+      }
     },
     onSuccess: () => {
       setFile(null);
@@ -123,10 +164,12 @@ export function ImageUpload() {
   };
 
   const actionLabel =
-    phase === 'processing'
-      ? t('gallery.imageUpload.processing')
-      : phase === 'creating'
-        ? t('gallery.imageUpload.creating')
+    phase === 'processingFile'
+      ? t('gallery.imageUpload.processingFile')
+      : phase === 'creatingImage'
+        ? t('gallery.imageUpload.creatingImage')
+        : phase === 'processingImage'
+          ? t('gallery.imageUpload.processingImage')
         : phase === 'uploading'
           ? t('gallery.imageUpload.uploading')
           : t('gallery.imageUpload.upload');

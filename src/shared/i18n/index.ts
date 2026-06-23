@@ -117,12 +117,22 @@ const resources = {
           upload: 'Upload',
           uploading: 'Uploading...',
           processing: 'Processing image...',
+          processingFile: 'Processing file...',
           creating: 'Creating image...',
-          success: 'Image uploaded successfully.',
+          creatingImage: 'Creating image...',
+          processingImage: 'Generating renditions...',
+          success:
+            'Image has been created successfully. All renditions have been generated.',
           failed: 'Image upload failed.',
           invalid: 'File upload has failed. Please choose another image.',
+          imageInvalid:
+            'Something went wrong during image generation. Please try again later.',
           timeout: 'Image processing timed out. Please try again.',
+          imageTimeout:
+            'Image generation timed out. Please try again later.',
           unexpectedStatus: 'Image processing returned an unexpected status.',
+          unexpectedImageStatus:
+            'Image generation returned an unexpected status.',
           emptyError: 'Choose an image to upload.',
         },
       },
@@ -239,13 +249,23 @@ const resources = {
           upload: 'Subir',
           uploading: 'Subiendo...',
           processing: 'Procesando imagen...',
+          processingFile: 'Procesando archivo...',
           creating: 'Creando imagen...',
-          success: 'Imagen subida correctamente.',
+          creatingImage: 'Creando imagen...',
+          processingImage: 'Generando variantes...',
+          success:
+            'La imagen se creo correctamente. Todas las variantes fueron generadas.',
           failed: 'Fallo al subir la imagen.',
           invalid: 'La carga del archivo fallo. Elige otra imagen.',
+          imageInvalid:
+            'Algo salio mal durante la generacion de la imagen. Intentalo de nuevo mas tarde.',
           timeout: 'El procesamiento de la imagen agoto el tiempo. Intentalo de nuevo.',
+          imageTimeout:
+            'La generacion de la imagen agoto el tiempo. Intentalo de nuevo mas tarde.',
           unexpectedStatus:
             'El procesamiento de la imagen devolvio un estado inesperado.',
+          unexpectedImageStatus:
+            'La generacion de la imagen devolvio un estado inesperado.',
           emptyError: 'Elige una imagen para subir.',
         },
       },
@@ -362,14 +382,24 @@ const resources = {
           upload: 'Загрузить',
           uploading: 'Загрузка...',
           processing: 'Обработка изображения...',
+          processingFile: 'Обработка файла...',
           creating: 'Создание изображения...',
-          success: 'Изображение успешно загружено.',
+          creatingImage: 'Создание изображения...',
+          processingImage: 'Генерация вариантов...',
+          success:
+            'Изображение успешно создано. Все варианты изображения сгенерированы.',
           failed: 'Не удалось загрузить изображение.',
           invalid: 'Загрузка файла не удалась. Выберите другое изображение.',
+          imageInvalid:
+            'Что-то пошло не так во время генерации изображения. Попробуйте позже.',
           timeout:
             'Время ожидания обработки изображения истекло. Попробуйте снова.',
+          imageTimeout:
+            'Время ожидания генерации изображения истекло. Попробуйте позже.',
           unexpectedStatus:
             'Обработка изображения вернула неожиданный статус.',
+          unexpectedImageStatus:
+            'Генерация изображения вернула неожиданный статус.',
           emptyError: 'Выберите изображение для загрузки.',
         },
       },
