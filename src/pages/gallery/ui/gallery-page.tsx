@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -13,6 +14,8 @@ import {
   TabsTrigger,
   LanguageSwitcher,
 } from '@/shared/ui';
+import { ImageList } from './image-list';
+import { ImageUpload } from './image-upload';
 
 /**
  * Utility to shorten long JWT tokens for display
@@ -26,6 +29,7 @@ function shorten(value: string | null, fallback: string): string {
 export function GalleryPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,6 +53,16 @@ export function GalleryPage() {
     } finally {
       setIsPending(false);
     }
+  };
+
+  const copyToken = async () => {
+    navigator.clipboard.writeText(token)
+    .then(() => {
+      console.log('Text successfully copied to clipboard');
+    })
+    .catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
   };
 
   return (
@@ -81,7 +95,18 @@ export function GalleryPage() {
           </TabsList>
 
           <TabsContent value='gallery'>
-            <div className='grid gap-4 mt-4 sm:grid-cols-1'>
+            <div className='mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]'>
+              <div className='grid gap-4'>
+                <ImageUpload
+                  onUploaded={() => {
+                    void queryClient.invalidateQueries({
+                      queryKey: ['admin-images'],
+                    });
+                  }}
+                />
+                <ImageList />
+              </div>
+
               <div className='rounded-xl border border-border bg-background p-4'>
                 <p className='text-xs uppercase tracking-[0.08em] text-muted-foreground'>
                   {t('gallery.accessToken')}
@@ -89,6 +114,13 @@ export function GalleryPage() {
                 <p className='mt-2 break-all font-mono text-sm text-foreground bg-muted/30 p-2 rounded'>
                   {shorten(token, t('gallery.tokenNotAvailable'))}
                 </p>
+                <Button
+                    variant='outline'
+                    onClick={copyToken}
+                    disabled={isPending}
+                >
+                  {isPending ? 'Wait...' : 'Copy Token'}
+                </Button>
               </div>
             </div>
           </TabsContent>

@@ -40,8 +40,10 @@ export async function createPkceAuthorizationRequest(
 
   const query = params.toString().replace(/\+/g, '%20');
 
+  const authUrl = `${resolveEndpoint(AUTH_CONFIG.endpoints.authorize)}?${query}`;
+
   return {
-    authUrl: `${resolveEndpoint(AUTH_CONFIG.endpoints.authorize)}?${query}`,
+    authUrl,
     state,
   };
 }
