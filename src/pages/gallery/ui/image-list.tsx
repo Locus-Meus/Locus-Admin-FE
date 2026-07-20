@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Eye, Loader2, RefreshCw, Save, Trash2 } from 'lucide-react';
 
@@ -19,6 +19,17 @@ const DEFAULT_PAGE_SIZE = 10;
 
 function formatRendition(rendition: ImageResponse['renditions'][number]): string {
   return `${rendition.name}: ${rendition.fileId}`;
+}
+
+function selectPreviewRendition(
+  renditions: ImageResponse['renditions'] = [],
+): ImageResponse['renditions'][number] | null {
+  return (
+    renditions.find((rendition) => rendition.name === 'w640') ??
+    renditions.find((rendition) => rendition.name === 'origin') ??
+    renditions[0] ??
+    null
+  );
 }
 
 interface ImageCardProps {
@@ -54,6 +65,26 @@ function ImageCard({ image }: ImageCardProps) {
   });
 
   const details = imageDetailsQuery.data ?? image;
+  const previewRendition = selectPreviewRendition(details.renditions);
+  const previewQuery = useQuery({
+    queryKey: ['admin-image-preview', previewRendition?.fileId],
+    queryFn: () => contentApi.getFileBlob(previewRendition?.fileId ?? ''),
+    enabled: Boolean(previewRendition?.fileId),
+  });
+  const previewUrl = useMemo(() => {
+    if (!previewQuery.data) return null;
+
+    return URL.createObjectURL(previewQuery.data);
+  }, [previewQuery.data]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
   const hasMoodChanges = useMemo(() => {
     const initial = [...(image.moods ?? [])].sort().join('|');
     const current = [...selectedMoods].sort().join('|');
@@ -115,6 +146,25 @@ function ImageCard({ image }: ImageCardProps) {
             Delete
           </Button>
         </div>
+      </div>
+
+      <div className='mt-4 overflow-hidden rounded-lg border border-border bg-background'>
+        {previewQuery.isLoading ? (
+          <div className='flex aspect-video items-center justify-center gap-2 text-sm text-muted-foreground'>
+            <Loader2 className='size-4 animate-spin' />
+            Loading preview...
+          </div>
+        ) : previewUrl ? (
+          <img
+            className='aspect-video w-full bg-muted object-contain'
+            src={previewUrl}
+            alt={`Image ${image.id}`}
+          />
+        ) : (
+          <div className='flex aspect-video items-center justify-center text-sm text-muted-foreground'>
+            {previewQuery.isError ? 'Could not load preview.' : 'No preview available.'}
+          </div>
+        )}
       </div>
 
       <div className='mt-4'>

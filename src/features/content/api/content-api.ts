@@ -93,6 +93,12 @@ class ContentApi extends BaseApiClient {
     return this.get<ImageResponse>(`/v1/api/admin/images/${imageId}`);
   }
 
+  public async getFileBlob(fileId: string): Promise<Blob> {
+    return this.get<Blob>(`/v1/api/admin/file/${fileId}`, {
+      responseType: 'blob',
+    });
+  }
+
   public async deleteImage(imageId: string): Promise<void> {
     await this.delete<void>(`/v1/api/admin/images/${imageId}`);
   }

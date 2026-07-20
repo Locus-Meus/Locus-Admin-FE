@@ -23,6 +23,7 @@ Use this file when working on gallery-related tasks, image upload, image listing
 File flow:
 
 - `POST /v1/api/admin/file` uploads a file as `multipart/form-data` with field name `file`.
+- `GET /v1/api/admin/file/{id}` downloads/renders file bytes. Use this for gallery image previews with a rendition `fileId`.
 - `GET /v1/api/admin/file/{id}/status` polls uploaded file processing status.
 - File terminal statuses used by the UI: `DRAFT`, `INVALID`.
 
@@ -69,7 +70,7 @@ Known rendition names from backend requirements:
 - `w1024`
 - `w1920`
 
-When rendering previews, prefer a smaller web-friendly rendition if available, usually `w640`, then `origin`, then the first available rendition. Confirm the actual file download/render endpoint before implementing previews if it is not already present in code.
+When rendering previews, prefer a smaller web-friendly rendition if available, usually `w640`, then `origin`, then the first available rendition. Use the selected rendition's `fileId` with `GET /v1/api/admin/file/{id}` and render the authenticated blob response as an object URL.
 
 ## UI/Data Fetching Conventions
 
