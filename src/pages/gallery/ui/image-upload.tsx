@@ -36,7 +36,11 @@ function wait(ms: number): Promise<void> {
   });
 }
 
-export function ImageUpload() {
+interface ImageUploadProps {
+  onUploaded?: () => void;
+}
+
+export function ImageUpload({ onUploaded }: ImageUploadProps) {
   const { t } = useTranslation();
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -120,6 +124,8 @@ export function ImageUpload() {
       if (inputRef.current) {
         inputRef.current.value = '';
       }
+
+      onUploaded?.();
     },
     onError: (err) => {
       setError(

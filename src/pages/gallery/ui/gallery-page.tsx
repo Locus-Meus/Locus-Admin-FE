@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -13,6 +14,7 @@ import {
   TabsTrigger,
   LanguageSwitcher,
 } from '@/shared/ui';
+import { ImageList } from './image-list';
 import { ImageUpload } from './image-upload';
 
 /**
@@ -27,6 +29,7 @@ function shorten(value: string | null, fallback: string): string {
 export function GalleryPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -93,7 +96,16 @@ export function GalleryPage() {
 
           <TabsContent value='gallery'>
             <div className='mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]'>
-              <ImageUpload />
+              <div className='grid gap-4'>
+                <ImageUpload
+                  onUploaded={() => {
+                    void queryClient.invalidateQueries({
+                      queryKey: ['admin-images'],
+                    });
+                  }}
+                />
+                <ImageList />
+              </div>
 
               <div className='rounded-xl border border-border bg-background p-4'>
                 <p className='text-xs uppercase tracking-[0.08em] text-muted-foreground'>

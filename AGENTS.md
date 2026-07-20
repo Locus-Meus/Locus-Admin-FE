@@ -4,6 +4,7 @@
 
 - Before starting any task, read `AGENTS.md`.
 - If the task is auth-related, also read `agents/auth.md` before making changes.
+- If the task is gallery/image/content-management related, also read `agents/gallery.md` before making changes.
 
 ## Common Project Knowledge
 

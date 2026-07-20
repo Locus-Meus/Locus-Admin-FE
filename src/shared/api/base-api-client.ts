@@ -112,4 +112,21 @@ export class BaseApiClient {
     const { data } = await this.axios.post<T>(url, body, config);
     return data;
   }
+
+  protected async put<T>(
+    url: string,
+    body?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
+    const { data } = await this.axios.put<T>(url, body, config);
+    return data;
+  }
+
+  protected async delete<T>(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
+    const { data } = await this.axios.delete<T>(url, config);
+    return data;
+  }
 }
